@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>QR codes parcours patients — M'Eye Clinic</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Gelasio:wght@600;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--navy:#13314F;--blue:#2C6FA0;--line:#dce8f2;--muted:#5a6b7b}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',sans-serif;color:#1f2d3d;background:#eef4f9;padding:24px}
+  .sheet{max-width:800px;margin:0 auto;background:#fff;border-radius:14px;padding:30px 34px 36px;box-shadow:0 20px 50px -30px rgba(19,49,79,.5)}
+  .head{display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid var(--line);padding-bottom:16px;margin-bottom:8px;flex-wrap:wrap;gap:10px}
+  .brand{display:flex;align-items:center;gap:11px}
+  .bmark{width:36px;height:36px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#8fd3ff,#2C6FA0 60%,#13314F)}
+  .brand b{font-family:'Gelasio',serif;font-size:1.3rem;color:var(--navy);display:block;line-height:1.1}
+  .brand span{font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--blue);font-weight:700}
+  .head .t{text-align:right;font-size:.8rem;color:var(--muted)}
+  h1{font-family:'Gelasio',serif;color:var(--navy);font-size:1.35rem;margin:16px 0 4px}
+  .lead{color:var(--muted);font-size:.9rem;margin-bottom:22px;max-width:60ch}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .qc{border:1px solid var(--line);border-radius:14px;padding:18px;text-align:center;display:flex;flex-direction:column;align-items:center}
+  .qc h2{font-family:'Gelasio',serif;color:var(--navy);font-size:1.05rem;margin-bottom:3px}
+  .qc .sub{font-size:.74rem;color:var(--muted);margin-bottom:13px;min-height:2em}
+  .qr{padding:10px;background:#fff;border:1px solid var(--line);border-radius:10px}
+  .qr img,.qr canvas{display:block}
+  .qc .cap{font-size:.72rem;color:var(--blue);font-weight:600;margin-top:11px}
+  .note{margin-top:22px;font-size:.78rem;color:var(--muted);background:#f5f9fc;border:1px solid var(--line);border-radius:10px;padding:13px 16px}
+  .print-btn{display:block;margin:18px auto 0;background:linear-gradient(135deg,var(--blue),var(--navy));color:#fff;border:none;border-radius:999px;padding:11px 22px;font:inherit;font-weight:700;cursor:pointer}
+  @media print{body{background:#fff;padding:0}.sheet{box-shadow:none;border-radius:0;max-width:100%}.print-btn{display:none}}
+</style>
+</head>
+<body>
+<div class="sheet">
+  <div class="head">
+    <div class="brand"><span class="bmark"></span><span><b>M'Eye Clinic</b><span>Ophtalmologie · Nice</span></span></div>
+    <div class="t">Parcours patients — QR à remettre<br>avec le dossier opératoire</div>
+  </div>
+  <h1>Vos consignes, en un scan</h1>
+  <p class="lead">Remettez au patient le QR code correspondant à son intervention. En le scannant, il accède à ses <strong>consignes pré et post-opératoires</strong> et à l'<strong>assistant M'Eye Clinic</strong>, disponible 24h/24 pour ses questions.</p>
+  <div class="grid" id="grid"></div>
+  <div class="note">🔒 Ces QR codes ne contiennent <strong>aucune donnée personnelle</strong> : ils ouvrent uniquement la page de consignes générales de l'intervention concernée. Vous pouvez les imprimer, les plastifier ou les intégrer à vos fiches de sortie.</div>
+  <button class="print-btn" onclick="window.print()">🖨️ Imprimer cette planche</button>
+</div>
+<script>
+var BASE="https://assistant.meyeclinic.fr/parcours.html?p=";
+var ITEMS=[
+  {p:"cataracte",t:"Cataracte",s:"Chirurgie de la cataracte"},
+  {p:"retine",t:"Rétine",s:"Chirurgie de la rétine & du vitré"},
+  {p:"strabisme",t:"Strabisme",s:"Chirurgie du strabisme"},
+  {p:"laser",t:"Laser réfractif",s:"LASIK · PKR · SMILE"}
+];
+var grid=document.getElementById('grid');
+ITEMS.forEach(function(it){
+  var card=document.createElement('div');card.className='qc';
+  card.innerHTML='<h2>'+it.t+'</h2><div class="sub">'+it.s+'</div><div class="qr" id="qr-'+it.p+'"></div><div class="cap">Scannez pour vos consignes</div>';
+  grid.appendChild(card);
+  new QRCode(document.getElementById('qr-'+it.p),{text:BASE+it.p,width:150,height:150,correctLevel:QRCode.CorrectLevel.M});
+});
+</script>
+</body>
+</html>
