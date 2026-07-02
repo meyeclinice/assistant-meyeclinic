@@ -6,3 +6,5 @@ Assistant virtuel d'information ophtalmologique de M'Eye Clinic (Nice).
 - `api/chat.js` — fonction serverless Vercel (API Claude)
 
 Déployé sur Vercel : https://assistant.meyeclinic.fr
+
+Backend multi-client (marque blanche) : clients meyeclinic + martiano. v2.
