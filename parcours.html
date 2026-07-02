@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Votre parcours opératoire — M'Eye Clinic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gelasio:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--navy:#13314F;--blue:#2C6FA0;--sky:#6FA4CC;--bg:#EAF2F8;--line:#dce8f2;--ink:#1f2d3d;--muted:#5a6b7b}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',sans-serif;color:var(--ink);background:var(--bg);line-height:1.6}
+  .top{background:linear-gradient(135deg,var(--blue),var(--navy));color:#fff;padding:20px 0}
+  .wrap{max-width:760px;margin:0 auto;padding:0 20px}
+  .brand{display:flex;align-items:center;gap:11px}
+  .bmark{width:34px;height:34px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#8fd3ff,#2C6FA0 60%,#13314F);flex:none}
+  .brand b{font-family:'Gelasio',serif;font-size:1.15rem}
+  .brand span{display:block;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+  main{padding:26px 0 90px}
+  .kicker{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--blue);margin-bottom:8px}
+  h1{font-family:'Gelasio',serif;font-size:1.7rem;color:var(--navy);line-height:1.2;margin-bottom:14px}
+  .disc{background:#fff8ec;border:1px solid #f2e2c2;color:#7a5a1e;border-radius:12px;padding:12px 15px;font-size:.85rem;margin-bottom:22px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px 22px;margin-bottom:14px;box-shadow:0 14px 34px -26px rgba(19,49,79,.5)}
+  .card h2{font-family:'Gelasio',serif;font-size:1.12rem;color:var(--navy);margin-bottom:10px;display:flex;align-items:center;gap:9px}
+  .card h2 .ic{width:26px;height:26px;border-radius:8px;background:var(--bg);display:inline-flex;align-items:center;justify-content:center;flex:none}
+  .card ul{list-style:none;display:flex;flex-direction:column;gap:8px}
+  .card li{position:relative;padding-left:20px;font-size:.94rem}
+  .card li::before{content:"";position:absolute;left:2px;top:9px;width:7px;height:7px;border-radius:50%;background:var(--sky)}
+  .card.urg{border-color:#f3c9c4;background:#fff6f5}
+  .card.urg h2{color:#b23a2c}.card.urg h2 .ic{background:#fbe4e0}
+  .card.urg li::before{background:#d9584a}
+  .card.urg a{color:#b23a2c;font-weight:700;text-decoration:none}
+  .cta{background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;border-radius:16px;padding:22px;text-align:center;margin-top:20px}
+  .cta p{opacity:.92;margin-bottom:12px;font-size:.95rem}
+  .cta a{display:inline-block;background:#fff;color:var(--navy);font-weight:700;padding:11px 20px;border-radius:999px;text-decoration:none;font-size:.92rem}
+  .foot{text-align:center;color:var(--muted);font-size:.8rem;margin-top:22px}
+  strong{color:var(--navy)}
+</style>
+</head>
+<body>
+<div class="top"><div class="wrap"><div class="brand"><span class="bmark"></span><span><b>M'Eye Clinic</b><span>Ophtalmologie · Nice</span></span></div></div></div>
+<main><div class="wrap">
+  <span class="kicker" id="kick">Votre parcours</span>
+  <h1 id="title">Votre parcours opératoire</h1>
+  <div class="disc">ℹ️ Ces consignes générales ne remplacent pas les instructions précises remises par votre chirurgien. En cas de doute, contactez le cabinet au <strong>04 97 19 30 46</strong>.</div>
+  <div id="content"></div>
+  <div class="cta">
+    <p>Une question sur votre intervention ? L'assistant vous répond ci-dessous, 24h/24.</p>
+    <a href="tel:+33497193046">📞 04 97 19 30 46</a>
+  </div>
+  <div class="foot">M'Eye Clinic — 3 Rue Fodéré, 06300 Nice · Lun–Ven 8h30–18h30</div>
+</div></main>
+
+<script>
+var DATA = {
+  cataracte: { t:"Chirurgie de la cataracte", k:"Parcours cataracte",
+    s:[
+      ["🗓️","Avant l'intervention",["Votre <strong>bilan pré-opératoire</strong> a été réalisé ; apportez vos ordonnances et collyres éventuels.","La veille : <strong>douche et shampoing</strong>. Le jour J : <strong>pas de maquillage</strong> des yeux.","Anesthésie le plus souvent <strong>locale (gouttes)</strong> : un petit-déjeuner léger est généralement autorisé — suivez les consignes qui vous ont été remises.","Prévoyez un <strong>accompagnant</strong> : vous ne conduirez pas au retour."]],
+      ["✅","Le jour J",["Arrivez à l'heure, œil non maquillé.","L'intervention est <strong>courte et indolore</strong> ; vous rentrez chez vous le jour même."]],
+      ["🌿","Après l'intervention",["Ne <strong>frottez pas</strong> et n'appuyez pas sur l'œil ; portez la <strong>coque de protection la nuit</strong> les premiers jours.","Instillez les <strong>collyres prescrits</strong> aux horaires indiqués, après lavage des mains.","Évitez piscine, poussière, jardinage et maquillage quelques semaines.","La vision s'améliore <strong>progressivement</strong> ; halos ou éblouissements possibles au début."]]
+    ],
+    u:["Douleur intense, baisse brutale de vision, œil très rouge ou écoulement."] },
+  retine: { t:"Chirurgie de la rétine", k:"Parcours rétine & vitré",
+    s:[
+      ["🗓️","Avant l'intervention",["Votre <strong>bilan pré-opératoire</strong> a été réalisé.","Anesthésie <strong>locale ou générale</strong> selon le cas → respectez le <strong>jeûne</strong> indiqué si anesthésie générale.","Prévoyez un <strong>accompagnant</strong>."]],
+      ["🌿","Après l'intervention",["Si un <strong>gaz</strong> a été placé dans l'œil : respectez <strong>strictement la position de la tête</strong> prescrite (souvent penchée vers le bas) pendant la durée indiquée.","Tant que le gaz est présent : <strong>pas d'avion ni d'altitude</strong> (risque grave), jusqu'à autorisation de votre chirurgien.","Ne frottez pas l'œil ; instillez les <strong>collyres prescrits</strong> ; portez la coque la nuit."]]
+    ],
+    u:["Douleur, baisse de vision, voile ou éclairs lumineux → consultez en urgence."] },
+  strabisme: { t:"Chirurgie du strabisme", k:"Parcours strabisme",
+    s:[
+      ["🗓️","Avant l'intervention",["La <strong>consultation d'anesthésie</strong> a été réalisée.","Respectez le <strong>jeûne strict</strong> avant l'anesthésie générale (pas d'aliment solide, liquides clairs selon le protocole remis).","Pour un enfant : prévoyez son doudou et des vêtements confortables."]],
+      ["🌿","Après l'intervention",["Œil <strong>rouge</strong>, larmoiement et légère gêne sont <strong>normaux</strong> quelques jours.","Instillez les <strong>collyres/pommades</strong> prescrits ; évitez la piscine quelque temps.","Une <strong>vision double</strong> transitoire est possible et s'estompe généralement."]]
+    ],
+    u:["Douleur importante, vomissements répétés ou fièvre → contactez le cabinet."] },
+  laser: { t:"Chirurgie réfractive au laser", k:"Parcours laser (LASIK · PKR · SMILE)",
+    s:[
+      ["🗓️","Avant l'intervention",["Retirez vos <strong>lentilles de contact</strong> avant le bilan et l'intervention (souples plusieurs jours, rigides plus longtemps, selon consignes).","Le jour J : <strong>pas de maquillage ni de parfum</strong>.","Prévoyez un <strong>accompagnant</strong> (vision floue au retour)."]],
+      ["🌿","Après l'intervention",["Ne <strong>frottez surtout pas</strong> vos yeux les premiers jours ; portez les <strong>coques de protection la nuit</strong> (LASIK).","Instillez les <strong>collyres prescrits</strong> (antibiotique, anti-inflammatoire, larmes artificielles).","<strong>PKR</strong> : inconfort, larmoiement et sensibilité à la lumière pendant 24–72 h sont normaux.","Évitez écrans prolongés, piscine, sauna, maquillage et sports de contact quelque temps.","Récupération <strong>rapide après LASIK</strong>, plus progressive après PKR."]]
+    ],
+    u:["Douleur croissante, baisse de vision ou œil très rouge."] }
+};
+function getP(){try{var p=new URLSearchParams(location.search).get('p');return (p&&DATA[p])?p:'cataracte';}catch(e){return 'cataracte';}}
+var P=getP(), d=DATA[P];
+document.title="Parcours "+d.t+" — M'Eye Clinic";
+document.getElementById('kick').textContent=d.k;
+document.getElementById('title').textContent=d.t;
+var html='';
+d.s.forEach(function(sec){
+  html+='<div class="card"><h2><span class="ic">'+sec[0]+'</span>'+sec[1]+'</h2><ul>';
+  sec[2].forEach(function(li){html+='<li>'+li+'</li>';});
+  html+='</ul></div>';
+});
+html+='<div class="card urg"><h2><span class="ic">⚠️</span>Quand contacter en urgence</h2><ul>';
+d.u.forEach(function(li){html+='<li>'+li+'</li>';});
+html+='<li>Appelez le <a href="tel:+33497193046">04 97 19 30 46</a>.</li></ul></div>';
+document.getElementById('content').innerHTML=html;
+
+// Assistant contextualisé
+var intro="Bonjour 👋 Je suis l'assistant de M'Eye Clinic pour votre <strong>"+d.t.toLowerCase()+"</strong>. Vos consignes sont affichées sur cette page — posez-moi toutes vos questions sur votre intervention.";
+var w=document.createElement('script');
+w.src="https://assistant.meyeclinic.fr/widget.js";
+w.setAttribute('data-client','meyeclinic');
+w.setAttribute('data-parcours',P);
+w.setAttribute('data-sub','Votre parcours '+d.t.toLowerCase());
+w.setAttribute('data-intro',intro.replace(/<[^>]+>/g,''));
+w.setAttribute('defer','');
+document.body.appendChild(w);
+</script>
+</body>
+</html>

@@ -22,6 +22,10 @@
   var API    = attr('data-api', 'https://assistant.meyeclinic.fr/api/chat');
   var LABEL  = attr('data-label', 'Une question ?');
   var INTRO  = attr('data-intro', "Bonjour 👋 Je suis l'assistant de M'Eye Clinic. Posez-moi vos questions sur vos yeux, vos examens ou une intervention.");
+  var urlParcours = '';
+  try { urlParcours = new URLSearchParams(location.search).get('parcours') || ''; } catch (e) {}
+  var PARCOURS = attr('data-parcours', '') || urlParcours;
+  var AUTOOPEN = attr('data-open', '') === '1' || !!PARCOURS;
 
   var hist = [], busy = false, started = false;
 
@@ -89,6 +93,7 @@
     root.querySelector('.mecw-x').addEventListener('click', toggle);
     el('mecw-form').addEventListener('submit', send);
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { var r = el('mecw-root'); if (r && r.classList.contains('open')) toggle(); } });
+    if (AUTOOPEN) setTimeout(toggle, 450);
   }
 
   function toggle() {
@@ -107,7 +112,9 @@
     var i = el('mecw-input'), q = i.value.trim(); if (!q) return false;
     i.value = ''; add(q, 'me'); hist.push({ role: 'user', content: q }); busy = true;
     var t = add('…', 'bot typing');
-    fetch(API, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ client: CLIENT, messages: hist }) })
+    var payload = { client: CLIENT, messages: hist };
+    if (PARCOURS) payload.parcours = PARCOURS;
+    fetch(API, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload) })
       .then(function (r) { return r.json(); })
       .then(function (d) {
         t.remove();
