@@ -194,7 +194,10 @@ loop();
       var t=document.getElementById('pathologies')||document.getElementById('pgrid');
       if(!t)return;
       var y=t.getBoundingClientRect().top+(window.pageYOffset||document.documentElement.scrollTop||0)-72;
-      window.scrollTo({top:y,behavior:'smooth'});
+      var de=document.documentElement,prev=de.style.scrollBehavior;
+      de.style.scrollBehavior='auto';
+      window.scrollTo(0,y);
+      setTimeout(function(){de.style.scrollBehavior=prev;},50);
     }, needSwitch?140:0);
   }
   Array.prototype.forEach.call(document.querySelectorAll('.menu a, nav a'),function(a){
