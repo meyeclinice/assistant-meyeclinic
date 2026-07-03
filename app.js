@@ -179,3 +179,14 @@ i++;
 }
 loop();
 }
+
+/* ===== Fix du lien "Pathologies" : défilement fiable jusqu'aux fiches ===== */
+(function(){
+  var pg=document.getElementById('pgrid');
+  var sec=pg&&pg.closest?pg.closest('.sec'):null;
+  if(sec)sec.id='pathologies';
+  function scrollPatho(e){ if(e&&e.preventDefault)e.preventDefault(); if(typeof go==='function')go('home'); setTimeout(function(){ var t=document.getElementById('pathologies')||document.getElementById('pgrid'); if(t)t.scrollIntoView({behavior:'smooth',block:'start'}); },90); }
+  Array.prototype.forEach.call(document.querySelectorAll('.menu a, nav a'),function(a){
+    if((a.textContent||'').trim().toLowerCase()==='pathologies'){ a.onclick=scrollPatho; }
+  });
+})();
