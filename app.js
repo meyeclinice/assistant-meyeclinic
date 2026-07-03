@@ -98,40 +98,60 @@ wait.innerHTML=fmt(reply);history.push({role:'assistant',content:reply});msgsEl.
 }
 window.send=send;
 
-/* ===== Hero : simulation de conversation avec l'assistant ===== */
+/* ===== Hero : conversation animée « Assistant en action » ===== */
 function heroChatDemo(){
-const stage=document.getElementById('heroStage');
+var stage=document.getElementById('heroStage');
 if(!stage)return;
 stage.style.display='block';stage.style.padding='0';
-stage.innerHTML='<div class="hd"><div class="hd-head"><span class="hd-dot"></span><span class="hd-name">Assistant M\'Eye Clinic</span><span class="hd-on">en ligne · 24h/24</span></div><div class="hd-body" id="hdBody"></div></div>';
-const body=document.getElementById('hdBody');
-const QA=[
-{q:"Comment se passe l'opération de la cataracte ?",a:"Une intervention courte et indolore, en ambulatoire sous anesthésie locale. 👁️"},
-{q:"Suis-je opérable au laser ?",a:"Cela dépend de votre cornée et de votre correction — un bilan préopératoire le détermine."},
-{q:"Que faire après mon injection (IVT) ?",a:"Évitez de frotter l'œil ; une légère gêne quelques heures est normale."},
-{q:"Puis-je conduire après l'opération ?",a:"Pas le jour même : prévoyez un accompagnant. Votre chirurgien précisera le délai."},
-{q:"Quand consulter en urgence ?",a:"Baisse brutale de vision, éclairs, voile ou douleur : appelez le 04 97 19 30 46."},
-{q:"C'est quoi le glaucome ?",a:"Une atteinte du nerf optique liée à la pression oculaire. Un contrôle après 40 ans est essentiel."},
-{q:"Combien de temps pour récupérer ?",a:"Rapide après LASIK, un peu plus progressive après PKR ou cataracte."},
-{q:"Dois-je rester à jeun ?",a:"Selon l'anesthésie : suivez les consignes remises, et contactez le cabinet en cas de doute."}
+var css=".hx-card{background:#fff;border-radius:16px;width:100%;height:100%;display:flex;flex-direction:column;overflow:hidden;font-family:'Inter',system-ui,sans-serif}"
++".hx-head{display:flex;align-items:center;gap:10px;padding:13px 16px;border-bottom:1px solid #e4e8f1;flex:none}"
++".hx-av{width:38px;height:38px;border-radius:50%;background:#eaf1fb;display:flex;align-items:center;justify-content:center;flex:none}"
++".hx-av svg{width:24px;height:24px}"
++".hx-name{font-weight:700;color:#1f4e86;font-size:14.5px;line-height:1.1}"
++".hx-status{font-size:11px;color:#1aa37a;display:flex;align-items:center;gap:5px;margin-top:2px}"
++".hx-dot{width:7px;height:7px;border-radius:50%;background:#1aa37a;animation:hxpulse 2s infinite}"
++"@keyframes hxpulse{0%{box-shadow:0 0 0 0 rgba(26,163,122,.5)}70%{box-shadow:0 0 0 7px rgba(26,163,122,0)}100%{box-shadow:0 0 0 0 rgba(26,163,122,0)}}"
++".hx-body{flex:1;padding:14px 14px 8px;display:flex;flex-direction:column;justify-content:flex-start;overflow:hidden;background:#f5f9ff}"
++".hx-row{display:flex;margin:7px 0;align-items:flex-end;gap:8px;opacity:0;transform:translateY(14px);transition:opacity .45s ease,transform .45s ease}"
++".hx-row.show{opacity:1;transform:none}"
++".hx-row.me{justify-content:flex-end}"
++".hx-bub{max-width:82%;padding:10px 13px;font-size:13px;line-height:1.42;border-radius:16px}"
++".hx-row.me .hx-bub{background:#1f4e86;color:#fff;border-bottom-right-radius:5px}"
++".hx-row.bot .hx-bub{background:#eaf1fb;color:#172033;border-bottom-left-radius:5px}"
++".hx-mini{width:24px;height:24px;border-radius:50%;background:#eaf1fb;display:flex;align-items:center;justify-content:center;flex:none}"
++".hx-mini svg{width:16px;height:16px}"
++".hx-typing .hx-bub{display:flex;gap:5px;align-items:center}"
++".hx-typing i{width:6px;height:6px;border-radius:50%;background:#9aa6b6;display:inline-block;animation:hxblink 1.2s infinite}"
++".hx-typing i:nth-child(2){animation-delay:.2s}.hx-typing i:nth-child(3){animation-delay:.4s}"
++"@keyframes hxblink{0%,80%,100%{opacity:.3}40%{opacity:1}}";
+var stEl=document.createElement('style');stEl.textContent=css;document.head.appendChild(stEl);
+var eyeAv='<svg viewBox="0 0 32 32"><ellipse cx="16" cy="16" rx="13" ry="8.5" fill="none" stroke="#1f4e86" stroke-width="2.4"/><circle cx="16" cy="16" r="4.6" fill="#2888c4"/><circle cx="16" cy="16" r="1.7" fill="#13325c"/></svg>';
+var miniAv='<svg viewBox="0 0 32 32"><ellipse cx="16" cy="16" rx="13" ry="8.5" fill="none" stroke="#1f4e86" stroke-width="2.4"/><circle cx="16" cy="16" r="4.6" fill="#2888c4"/></svg>';
+stage.innerHTML='<div class="hx-card"><div class="hx-head"><div class="hx-av">'+eyeAv+'</div><div><div class="hx-name">Assistant M\'Eye Clinic</div><div class="hx-status"><span class="hx-dot"></span>En ligne · répond 24h/24</div></div></div><div class="hx-body" id="hxBody"></div></div>';
+var body=document.getElementById('hxBody');
+var PAIRS=[
+{q:"Après mon opération de la cataracte, quand puis-je conduire ?",a:"Souvent dès que votre chirurgien l'autorise et que la vision est nette 👍 Je vous donne les repères des premiers jours ?"},
+{q:"C'est quoi une chirurgie au laser (LASIK) ?",a:"Une correction de la vue en quelques minutes, sans douleur pendant l'acte 👨‍⚕️ Récupération souvent en 24–48 h ✨"},
+{q:"J'ai des mouches et des éclairs, est-ce grave ?",a:"Mieux vaut faire vérifier votre rétine rapidement 👀 Je peux vous orienter vers un créneau d'urgence."},
+{q:"Suis-je trop âgé pour être opéré de la cataracte ?",a:"Pas d'âge limite 🙂 L'opération se fait à 70, 80, 90 ans avec d'excellents résultats 👨‍⚕️👍"},
+{q:"Quand dois-je mettre mes collyres après l'opération ?",a:"Suivez le rythme de l'ordonnance 💧 Pensez à espacer chaque collyre de quelques minutes. À très vite 😊"},
+{q:"Peut-on se faire opérer au laser à tout âge ?",a:"La chirurgie laser corrige aujourd'hui toutes les amétropies — myopie, hypermétropie, astigmatisme et presbytie 👨‍⚕️ Elle se pratique en général de 18 à 60 ans, après un bilan personnalisé ✨"}
 ];
-function esc(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-function bubble(cls,html){const d=document.createElement('div');d.className='hd-msg '+cls;d.innerHTML=html;body.appendChild(d);body.scrollTop=body.scrollHeight;return d;}
-function typing(){const d=document.createElement('div');d.className='hd-msg a hd-typ';d.innerHTML='<span></span><span></span><span></span>';body.appendChild(d);body.scrollTop=body.scrollHeight;return d;}
-let i=0;
-function trim(){while(body.children.length>6){body.removeChild(body.firstChild);}}
-function step(){
-const qa=QA[i%QA.length];
-bubble('u',esc(qa.q));trim();
-setTimeout(function(){
-const t=typing();trim();
-setTimeout(function(){
-t.remove();
-bubble('a',esc(qa.a));trim();
+function wait(ms){return new Promise(function(r){setTimeout(r,ms);});}
+function rowMe(t){var r=document.createElement('div');r.className='hx-row me';r.innerHTML='<div class="hx-bub">'+t+'</div>';body.appendChild(r);requestAnimationFrame(function(){r.classList.add('show');});return r;}
+function rowTyping(){var r=document.createElement('div');r.className='hx-row bot hx-typing';r.innerHTML='<div class="hx-mini">'+miniAv+'</div><div class="hx-bub"><i></i><i></i><i></i></div>';body.appendChild(r);requestAnimationFrame(function(){r.classList.add('show');});return r;}
+function rowBot(t){var r=document.createElement('div');r.className='hx-row bot';r.innerHTML='<div class="hx-mini">'+miniAv+'</div><div class="hx-bub">'+t+'</div>';body.appendChild(r);requestAnimationFrame(function(){r.classList.add('show');});return r;}
+function fadeClear(){return new Promise(function(res){var kids=body.children,k;for(k=0;k<kids.length;k++)kids[k].classList.remove('show');setTimeout(function(){body.innerHTML='';res();},450);});}
+var i=0;
+async function loop(){
+while(true){
+var p=PAIRS[i%PAIRS.length];
+rowMe(p.q); await wait(1100);
+var t=rowTyping(); await wait(1500); t.remove();
+rowBot(p.a); await wait(4200);
+await fadeClear(); await wait(350);
 i++;
-setTimeout(step,2400);
-},1300);
-},900);
 }
-setTimeout(step,600);
+}
+loop();
 }
