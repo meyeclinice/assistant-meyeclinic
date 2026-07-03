@@ -128,3 +128,30 @@
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', build); else build();
 })();
+
+/* ===== Actualités auto — affichées sur meyeclinic.fr/actualites (flux git assistant.meyeclinic.fr/api/actus) ===== */
+(function () {
+  try { if (!/actualites/.test(location.pathname)) return; } catch (e) { return; }
+  function esc(t) { return String(t || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+  var G = ['linear-gradient(135deg,#1565d8,#0a3d8f)', 'linear-gradient(135deg,#16b8a6,#0a7d70)', 'linear-gradient(135deg,#2C6FA0,#13314F)'];
+  var EYE = '<svg viewBox="0 0 120 66" fill="none" stroke="rgba(255,255,255,.92)" stroke-width="3" style="width:62%"><ellipse cx="60" cy="33" rx="40" ry="21"/><circle cx="60" cy="33" r="11" fill="rgba(255,255,255,.92)" stroke="none"/><circle cx="60" cy="33" r="5" fill="#0d1b2a" stroke="none"/></svg>';
+  function render() {
+    var posts = document.querySelector('.posts');
+    if (!posts) return;
+    fetch('https://assistant.meyeclinic.fr/api/actus').then(function (r) { return r.json(); }).then(function (d) {
+      var arts = (d && d.articles) || [];
+      if (!arts.length) return;
+      Array.prototype.forEach.call(posts.querySelectorAll('article.post[data-auto]'), function (e) { e.remove(); });
+      var frag = document.createDocumentFragment();
+      arts.forEach(function (a, i) {
+        var el = document.createElement('article');
+        el.className = 'post';
+        el.setAttribute('data-auto', '1');
+        el.innerHTML = '<div class="cover" style="height:170px;display:grid;place-items:center;background:' + G[i % 3] + '">' + EYE + '</div><div class="body"><span class="cat">' + esc(a.cat) + '</span><h2>' + esc(a.title) + '</h2><p>' + esc(a.excerpt) + '</p><span class="more">Lire l&rsquo;article →</span></div>';
+        frag.appendChild(el);
+      });
+      posts.insertBefore(frag, posts.firstChild);
+    }).catch(function () {});
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', render); else render();
+})();
