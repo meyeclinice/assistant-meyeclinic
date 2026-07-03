@@ -14,6 +14,21 @@ const animCSS = `
 .an .diffuse{animation:ivtDiff 4.2s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
 @keyframes tearShow{0%,12%{opacity:0;transform:scale(.4)}20%{opacity:1;transform:scale(1)}100%{opacity:1}}
 .an .tear{animation:tearShow 5s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+/* Hero — simulation de conversation avec l'assistant */
+.hd{background:#fff;border-radius:16px;width:100%;height:100%;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 6px 20px -12px rgba(13,61,143,.4)}
+.hd-head{display:flex;align-items:center;gap:8px;padding:11px 14px;background:linear-gradient(120deg,#1565d8,#0a3d8f);color:#fff;flex:none}
+.hd-dot{width:9px;height:9px;border-radius:50%;background:#4ade80;box-shadow:0 0 0 3px rgba(74,222,128,.25)}
+.hd-name{font-weight:700;font-size:.9rem}
+.hd-on{margin-left:auto;font-size:.7rem;opacity:.85}
+.hd-body{flex:1;overflow:hidden;padding:12px;display:flex;flex-direction:column;gap:8px;background:#f5f9ff}
+.hd-msg{max-width:84%;padding:8px 11px;border-radius:13px;font-size:.82rem;line-height:1.42;animation:hdIn .3s ease;word-wrap:break-word}
+.hd-msg.u{align-self:flex-end;background:linear-gradient(120deg,#1565d8,#0a3d8f);color:#fff;border-bottom-right-radius:4px}
+.hd-msg.a{align-self:flex-start;background:#fff;border:1px solid #e6edf6;color:#0d1b2a;border-bottom-left-radius:4px}
+@keyframes hdIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.hd-typ{display:flex;gap:4px;align-items:center;padding:11px}
+.hd-typ span{width:6px;height:6px;border-radius:50%;background:#9db4d0;animation:hdBlink 1s infinite}
+.hd-typ span:nth-child(2){animation-delay:.15s}.hd-typ span:nth-child(3){animation-delay:.3s}
+@keyframes hdBlink{0%,100%{opacity:.3}50%{opacity:1}}
 `;
 const st=document.createElement('style');st.textContent=animCSS;document.head.appendChild(st);
 
@@ -43,22 +58,22 @@ const P=[
 
 /* ===== Rendu ===== */
 function el(html){const d=document.createElement('div');d.innerHTML=html;return d.firstElementChild;}
-document.getElementById('heroStage').innerHTML=SVG.refraction;
+heroChatDemo();
 const pgrid=document.getElementById('pgrid');
 P.forEach(p=>{
-  const c=el(`<div class="pcard"><div class="thumb">${p.svg}</div><div class="body"><h3>${p.title}</h3><p>${p.short}</p><div class="more">En savoir plus →</div></div></div>`);
-  c.onclick=()=>openDetail(p.id);pgrid.appendChild(c);
+const c=el(`<div class="pcard"><div class="thumb">${p.svg}</div><div class="body"><h3>${p.title}</h3><p>${p.short}</p><div class="more">En savoir plus →</div></div></div>`);
+c.onclick=()=>openDetail(p.id);pgrid.appendChild(c);
 });
 function openDetail(id){const p=P.find(x=>x.id===id);if(!p)return;
-  document.getElementById('dstage').innerHTML=p.svg;
-  document.getElementById('dcontent').innerHTML=`<h1>${p.title}</h1><p class="lead">${p.lead}</p>${p.html}<div style="margin-top:1.6rem"><a class="btn btn-primary" href="https://www.doctolib.fr/cabinet-medical/nice/m-eye-clinic" target="_blank" rel="noopener">Prendre rendez-vous</a></div>`;
-  go('detail');scrollTo(0,0);
+document.getElementById('dstage').innerHTML=p.svg;
+document.getElementById('dcontent').innerHTML=`<h1>${p.title}</h1><p class="lead">${p.lead}</p>${p.html}<div style="margin-top:1.6rem"><a class="btn btn-primary" href="https://www.doctolib.fr/cabinet-medical/nice/m-eye-clinic" target="_blank" rel="noopener">Prendre rendez-vous</a></div>`;
+go('detail');scrollTo(0,0);
 }
 /* ===== Navigation ===== */
 function go(v){document.querySelectorAll('.view').forEach(s=>s.classList.remove('active'));document.getElementById(v).classList.add('active');
-  document.querySelectorAll('.menu a[data-v]').forEach(a=>a.classList.toggle('on',a.dataset.v===v));
-  document.getElementById('menu').classList.remove('open');
-  if(v==='chat')setTimeout(()=>document.getElementById('input').focus(),100);}
+document.querySelectorAll('.menu a[data-v]').forEach(a=>a.classList.toggle('on',a.dataset.v===v));
+document.getElementById('menu').classList.remove('open');
+if(v==='chat')setTimeout(()=>document.getElementById('input').focus(),100);}
 window.go=go;
 
 /* ===== Chat ===== */
@@ -70,15 +85,53 @@ function fmt(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/\*\
 function addMsg(role,text){const m=el(`<div class="msg ${role==='user'?'u':'a'}">${role==='user'?fmt(text):text}</div>`);msgsEl.appendChild(m);msgsEl.scrollTop=msgsEl.scrollHeight;return m;}
 if(!msgsEl.children.length)addMsg('assistant',"Bonjour 👋 Je suis l'assistant de M'Eye Clinic. Posez-moi vos questions sur vos yeux, vos examens ou votre opération. <i style='color:#94a3b8'>(Je donne des informations générales, je ne remplace pas votre médecin.)</i>");
 async function send(){
-  const inp=document.getElementById('input');const text=inp.value.trim();if(!text)return;
-  inp.value='';document.getElementById('suggest').style.display='none';
-  addMsg('user',text);history.push({role:'user',content:text});
-  const wait=addMsg('assistant',"<i style='color:#94a3b8'>L'assistant réfléchit…</i>");
-  try{
-    const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:history})});
-    const data=await r.json();
-    const reply=(data&&data.reply)?data.reply:"Désolé, une erreur est survenue. Réessayez ou appelez le 04 97 19 30 46.";
-    wait.innerHTML=fmt(reply);history.push({role:'assistant',content:reply});msgsEl.scrollTop=msgsEl.scrollHeight;
-  }catch(e){wait.innerHTML="Connexion impossible pour le moment. Réessayez, ou appelez le <b>04 97 19 30 46</b>.";}
+const inp=document.getElementById('input');const text=inp.value.trim();if(!text)return;
+inp.value='';document.getElementById('suggest').style.display='none';
+addMsg('user',text);history.push({role:'user',content:text});
+const wait=addMsg('assistant',"<i style='color:#94a3b8'>L'assistant réfléchit…</i>");
+try{
+const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:history})});
+const data=await r.json();
+const reply=(data&&data.reply)?data.reply:"Désolé, une erreur est survenue. Réessayez ou appelez le 04 97 19 30 46.";
+wait.innerHTML=fmt(reply);history.push({role:'assistant',content:reply});msgsEl.scrollTop=msgsEl.scrollHeight;
+}catch(e){wait.innerHTML="Connexion impossible pour le moment. Réessayez, ou appelez le <b>04 97 19 30 46</b>.";}
 }
 window.send=send;
+
+/* ===== Hero : simulation de conversation avec l'assistant ===== */
+function heroChatDemo(){
+const stage=document.getElementById('heroStage');
+if(!stage)return;
+stage.style.display='block';stage.style.padding='0';
+stage.innerHTML='<div class="hd"><div class="hd-head"><span class="hd-dot"></span><span class="hd-name">Assistant M\'Eye Clinic</span><span class="hd-on">en ligne · 24h/24</span></div><div class="hd-body" id="hdBody"></div></div>';
+const body=document.getElementById('hdBody');
+const QA=[
+{q:"Comment se passe l'opération de la cataracte ?",a:"Une intervention courte et indolore, en ambulatoire sous anesthésie locale. 👁️"},
+{q:"Suis-je opérable au laser ?",a:"Cela dépend de votre cornée et de votre correction — un bilan préopératoire le détermine."},
+{q:"Que faire après mon injection (IVT) ?",a:"Évitez de frotter l'œil ; une légère gêne quelques heures est normale."},
+{q:"Puis-je conduire après l'opération ?",a:"Pas le jour même : prévoyez un accompagnant. Votre chirurgien précisera le délai."},
+{q:"Quand consulter en urgence ?",a:"Baisse brutale de vision, éclairs, voile ou douleur : appelez le 04 97 19 30 46."},
+{q:"C'est quoi le glaucome ?",a:"Une atteinte du nerf optique liée à la pression oculaire. Un contrôle après 40 ans est essentiel."},
+{q:"Combien de temps pour récupérer ?",a:"Rapide après LASIK, un peu plus progressive après PKR ou cataracte."},
+{q:"Dois-je rester à jeun ?",a:"Selon l'anesthésie : suivez les consignes remises, et contactez le cabinet en cas de doute."}
+];
+function esc(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function bubble(cls,html){const d=document.createElement('div');d.className='hd-msg '+cls;d.innerHTML=html;body.appendChild(d);body.scrollTop=body.scrollHeight;return d;}
+function typing(){const d=document.createElement('div');d.className='hd-msg a hd-typ';d.innerHTML='<span></span><span></span><span></span>';body.appendChild(d);body.scrollTop=body.scrollHeight;return d;}
+let i=0;
+function trim(){while(body.children.length>6){body.removeChild(body.firstChild);}}
+function step(){
+const qa=QA[i%QA.length];
+bubble('u',esc(qa.q));trim();
+setTimeout(function(){
+const t=typing();trim();
+setTimeout(function(){
+t.remove();
+bubble('a',esc(qa.a));trim();
+i++;
+setTimeout(step,2400);
+},1300);
+},900);
+}
+setTimeout(step,600);
+}
