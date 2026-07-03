@@ -134,7 +134,34 @@
   try { if (!/actualites/.test(location.pathname)) return; } catch (e) { return; }
   function esc(t) { return String(t || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
   var G = ['linear-gradient(135deg,#1565d8,#0a3d8f)', 'linear-gradient(135deg,#16b8a6,#0a7d70)', 'linear-gradient(135deg,#2C6FA0,#13314F)'];
-  var EYE = '<svg viewBox="0 0 120 66" fill="none" stroke="rgba(255,255,255,.92)" stroke-width="3" style="width:62%"><ellipse cx="60" cy="33" rx="40" ry="21"/><circle cx="60" cy="33" r="11" fill="rgba(255,255,255,.92)" stroke="none"/><circle cx="60" cy="33" r="5" fill="#0d1b2a" stroke="none"/></svg>';
+  function svg(inner) { return '<svg viewBox="0 0 120 72" fill="none" stroke="rgba(255,255,255,.92)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width:58%">' + inner + '</svg>'; }
+  var W = 'rgba(255,255,255,.92)';
+  var ILL = {
+    eye: svg('<ellipse cx="60" cy="36" rx="40" ry="22"/><circle cx="60" cy="36" r="11" fill="' + W + '" stroke="none"/><circle cx="60" cy="36" r="5" fill="#0d1b2a" stroke="none"/>'),
+    cataracte: svg('<ellipse cx="60" cy="36" rx="40" ry="22"/><circle cx="60" cy="36" r="13"/><circle cx="60" cy="36" r="13" fill="rgba(255,255,255,.4)" stroke="none"/><path d="M52 33 q8 -6 16 0" stroke-width="2.2"/><path d="M52 40 q8 -6 16 0" stroke-width="2.2"/>'),
+    glaucome: svg('<ellipse cx="60" cy="40" rx="34" ry="19"/><circle cx="60" cy="40" r="10" fill="' + W + '" stroke="none"/><circle cx="60" cy="40" r="4.5" fill="#0d1b2a" stroke="none"/><path d="M60 8 v9 M56 13 l4 4 4 -4" stroke-width="2.6"/><path d="M101 40 h-9 M96 36 l-4 4 4 4" stroke-width="2.6"/><path d="M19 40 h9 M24 36 l-4 4 4 4" stroke-width="2.6"/>'),
+    retine: svg('<circle cx="60" cy="37" r="25"/><circle cx="60" cy="37" r="4.5" fill="' + W + '" stroke="none"/><path d="M60 37 Q46 26 40 30 M60 37 Q74 26 82 32 M60 37 Q50 52 44 50 M60 37 Q70 52 78 48" stroke-width="1.8"/>'),
+    diabete: svg('<circle cx="60" cy="37" r="25"/><circle cx="60" cy="37" r="4" fill="' + W + '" stroke="none"/><g fill="' + W + '" stroke="none"><circle cx="47" cy="28" r="2.4"/><circle cx="74" cy="30" r="2.4"/><circle cx="49" cy="49" r="2.4"/><circle cx="72" cy="47" r="2.4"/><circle cx="60" cy="20" r="2.1"/></g><path d="M60 37 Q48 30 42 33 M60 37 Q72 30 79 34" stroke-width="1.6"/>'),
+    urgence: svg('<ellipse cx="50" cy="40" rx="32" ry="18"/><circle cx="50" cy="40" r="9" fill="' + W + '" stroke="none"/><circle cx="50" cy="40" r="4" fill="#0d1b2a" stroke="none"/><path d="M92 10 l-11 20 h8 l-11 22" stroke-width="3.4"/>'),
+    secheresse: svg('<ellipse cx="56" cy="34" rx="36" ry="20"/><circle cx="56" cy="34" r="10" fill="' + W + '" stroke="none"/><circle cx="56" cy="34" r="4.5" fill="#0d1b2a" stroke="none"/><path d="M92 40 c-7 7 -7 14 0 14 c7 0 7 -7 0 -14 Z"/>'),
+    laser: svg('<path d="M24 58 Q60 16 96 58" stroke-width="3"/><path d="M50 10 L57 42" stroke-width="2.6"/><path d="M60 8 L60 42" stroke-width="2.6"/><path d="M70 10 L63 42" stroke-width="2.6"/><circle cx="60" cy="46" r="3" fill="' + W + '" stroke="none"/>'),
+    pediatrie: svg('<circle cx="40" cy="40" r="16"/><circle cx="80" cy="40" r="16"/><path d="M56 40 h8"/><path d="M24 33 l-10 -5"/><path d="M96 33 l10 -5"/>'),
+    prevention: svg('<circle cx="60" cy="38" r="14"/><path d="M60 9 v9 M60 58 v9 M31 38 h9 M80 38 h9 M40 18 l6 6 M80 58 l-6 -6 M80 18 l-6 6 M40 58 l6 -6"/>')
+  };
+  function pickIll(a) {
+    if (a && a.ill && ILL[a.ill]) return ILL[a.ill];
+    var s = ((a && a.cat || '') + ' ' + (a && a.title || '')).toLowerCase();
+    if (/diab/.test(s)) return ILL.diabete;
+    if (/catarac/.test(s)) return ILL.cataracte;
+    if (/glaucom/.test(s)) return ILL.glaucome;
+    if (/laser|lasik|pkr|smile|r[ée]fract/.test(s)) return ILL.laser;
+    if (/urgence|d[ée]collement|[ée]clair|flottant|d[ée]chirure/.test(s)) return ILL.urgence;
+    if (/s[ée]cheresse|surface|larme/.test(s)) return ILL.secheresse;
+    if (/enfant|p[ée]diatr|strabisme|presbyt|lunette/.test(s)) return ILL.pediatrie;
+    if (/[ée]cran|soleil|\buv\b|pr[ée]vention/.test(s)) return ILL.prevention;
+    if (/dmla|maculaire|r[ée]tine|r[ée]tin/.test(s)) return ILL.retine;
+    return ILL.eye;
+  }
   function render() {
     var posts = document.querySelector('.posts');
     if (!posts) return;
@@ -147,7 +174,7 @@
         var el = document.createElement('article');
         el.className = 'post';
         el.setAttribute('data-auto', '1');
-        el.innerHTML = '<div class="cover" style="height:170px;display:grid;place-items:center;background:' + G[i % 3] + '">' + EYE + '</div><div class="body"><span class="cat">' + esc(a.cat) + '</span><h2>' + esc(a.title) + '</h2><p>' + esc(a.excerpt) + '</p><span class="more">Lire l&rsquo;article →</span></div>';
+        el.innerHTML = '<div class="cover" style="height:170px;display:grid;place-items:center;background:' + G[i % 3] + '">' + pickIll(a) + '</div><div class="body"><span class="cat">' + esc(a.cat) + '</span><h2>' + esc(a.title) + '</h2><p>' + esc(a.excerpt) + '</p><span class="more">Lire l&rsquo;article →</span></div>';
         frag.appendChild(el);
       });
       posts.insertBefore(frag, posts.firstChild);
