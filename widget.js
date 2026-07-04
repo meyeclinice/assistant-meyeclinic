@@ -60,7 +60,24 @@
     + '.mecw-send:hover{filter:brightness(1.08)}'
     + '.mecw-disc{font-size:11px;color:#7d93a6;text-align:center;padding:0 12px 12px;background:#fff}'
     + '.mecw-disc a{color:' + C1 + ';font-weight:600;text-decoration:none}'
-    + '@media(max-width:560px){#mecw-fab .mecw-lbl{display:none}#mecw-fab{padding:15px;right:16px;bottom:16px}#mecw-panel{right:0;bottom:0;width:100vw;height:100dvh;border-radius:0}}';
+    + '#mecw-rappel-fab{position:fixed;right:20px;bottom:74px;z-index:2147483000;display:flex;align-items:center;gap:7px;background:#fff;color:' + C2 + ';border:1px solid ' + C1 + ';cursor:pointer;padding:9px 14px;border-radius:999px;box-shadow:0 10px 26px -12px rgba(19,49,79,.5);font-family:inherit;font-weight:700;font-size:13px;line-height:1;transition:transform .2s}'
+    + '#mecw-rappel-fab:hover{transform:translateY(-2px)}'
+    + '#mecw-root.open #mecw-rappel-fab{display:none}'
+    + '.mecw-rp{align-self:stretch;background:#fff;border:1px solid #dbe8f3;border-radius:14px;padding:14px;box-shadow:0 8px 22px -14px rgba(19,49,79,.5)}'
+    + '.mecw-rp h4{margin:0 0 4px;font-size:14px;color:' + C2 + ';font-weight:700}'
+    + '.mecw-rp p{margin:0 0 10px;font-size:12px;color:#5a6b7b}'
+    + '.mecw-rp label{display:block;font-size:11px;font-weight:700;color:' + C2 + ';margin-bottom:9px}'
+    + '.mecw-rp input[type=text],.mecw-rp input[type=tel]{width:100%;margin-top:4px;border:1px solid #cfe0ee;border-radius:10px;padding:9px 11px;font:inherit;font-size:13px;font-weight:400;outline:none;color:#1f2d3d}'
+    + '.mecw-rp input:focus{border-color:' + C1 + '}'
+    + '.mecw-rp .cons{display:flex;gap:8px;align-items:flex-start;font-weight:400;font-size:11px;color:#5a6b7b}'
+    + '.mecw-rp .cons input{width:auto;margin-top:2px;flex:none}'
+    + '.mecw-rp button{width:100%;margin-top:10px;background:linear-gradient(135deg,' + C1 + ',' + C2 + ');color:#fff;border:none;border-radius:999px;padding:11px;font:inherit;font-weight:700;font-size:13px;cursor:pointer}'
+    + '.mecw-rp .hp{position:absolute;left:-9999px;height:0;overflow:hidden}'
+    + '.mecw-rp .st{display:block;margin-top:8px;font-size:12px;font-weight:600}'
+    + '.mecw-rp .st.ok{color:#178a5a}.mecw-rp .st.err{color:#c0392b}'
+    + '.mecw-rpbtn{align-self:flex-start;background:linear-gradient(135deg,' + C1 + ',' + C2 + ');color:#fff;border:none;border-radius:12px;padding:10px 14px;font:inherit;font-weight:700;font-size:13px;cursor:pointer;box-shadow:0 10px 24px -14px rgba(19,49,79,.7)}'
+    + '.mecw-rpbtn:hover{filter:brightness(1.06)}'
+    + '@media(max-width:560px){#mecw-fab .mecw-lbl{display:none}#mecw-fab{padding:15px;right:16px;bottom:16px}#mecw-rappel-fab{right:16px;bottom:82px;font-size:12px;padding:8px 12px}#mecw-panel{right:0;bottom:0;width:100vw;height:100dvh;border-radius:0}}';
 
   function hexa(hex, a) {
     var h = hex.replace('#', ''); if (h.length === 3) h = h.replace(/(.)/g, '$1$1');
@@ -79,6 +96,9 @@
       +   '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5Z"/></svg>'
       +   '<span class="mecw-lbl">' + esc(LABEL) + '</span>'
       + '</button>'
+      + '<button id="mecw-rappel-fab" type="button" aria-label="Être rappelé par le secrétariat">'
+      +   '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="' + C2 + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92Z"/></svg>'
+      +   'Être rappelé</button>'
       + '<div id="mecw-panel" role="dialog" aria-label="' + esc(NAME) + '">'
       +   '<div class="mecw-head"><div><b>' + esc(NAME) + '</b><span>' + esc(SUB) + '</span></div>'
       +     '<button type="button" class="mecw-x" aria-label="Fermer">&times;</button></div>'
@@ -90,6 +110,7 @@
     document.body.appendChild(root);
 
     el('mecw-fab').addEventListener('click', toggle);
+    el('mecw-rappel-fab').addEventListener('click', openRappelDirect);
     root.querySelector('.mecw-x').addEventListener('click', toggle);
     el('mecw-form').addEventListener('submit', send);
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { var r = el('mecw-root'); if (r && r.classList.contains('open')) toggle(); } });
@@ -118,11 +139,74 @@
       .then(function (r) { return r.json(); })
       .then(function (d) {
         t.remove();
-        var rep = (d && d.reply) ? d.reply : "Désolé, je n'ai pas pu répondre. Réessayez, ou appelez le " + PHONE + ".";
-        rep = rep.replace(/\[\[RAPPEL\]\]/g, '').trim();
-        add(rep, 'bot'); hist.push({ role: 'assistant', content: rep }); busy = false;
+        var raw = (d && d.reply) ? d.reply : "Désolé, je n'ai pas pu répondre. Réessayez, ou appelez le " + PHONE + ".";
+        var hadRappel = /\[\[RAPPEL\]\]/.test(raw);
+        var rep = raw.replace(/\[\[RAPPEL\]\]/g, '').trim();
+        add(rep, 'bot'); hist.push({ role: 'assistant', content: rep });
+        if (hadRappel) rappelButton('Chirurgie — ' + q.slice(0, 90));
+        busy = false;
       })
       .catch(function () { t.remove(); add('Une erreur est survenue. Réessayez, ou appelez le ' + PHONE + '.', 'bot'); busy = false; });
+    return false;
+  }
+
+  function openRappelDirect() {
+    var r = el('mecw-root');
+    if (!r.classList.contains('open')) toggle();
+    setTimeout(function () {
+      if (!started) { started = true; add(INTRO, 'bot'); }
+      rappelForm('Chirurgie (demande via le site)');
+    }, 130);
+  }
+  function rappelButton(motif) {
+    var b = document.createElement('button'); b.type = 'button'; b.className = 'mecw-rpbtn';
+    b.textContent = '📞 Être rappelé par le secrétariat';
+    b.addEventListener('click', function () { b.remove(); rappelForm(motif); });
+    var m = el('mecw-msgs'); m.appendChild(b); m.scrollTop = 1e9;
+  }
+  function rappelForm(motif) {
+    var wrap = document.createElement('div'); wrap.className = 'mecw-rp';
+    wrap.innerHTML =
+        '<h4>Être rappelé par le secrétariat</h4>'
+      + '<p>Laissez vos coordonnées : le secrétariat vous recontacte pour organiser une consultation.</p>'
+      + '<form novalidate>'
+      +   '<span class="hp"><input name="bot-field" tabindex="-1" autocomplete="off"></span>'
+      +   '<label>Nom et prénom<input type="text" name="nom" required></label>'
+      +   '<label>Téléphone<input type="tel" name="telephone" required></label>'
+      +   '<label>Créneau souhaité (optionnel)<input type="text" name="creneau" placeholder="ex. en semaine, le matin"></label>'
+      +   '<label class="cons"><input type="checkbox" name="consentement" value="oui" required> <span>J\'accepte d\'être recontacté(e) par le secrétariat.</span></label>'
+      +   '<input type="hidden" name="sujet">'
+      +   '<button type="submit">Demander un rappel</button>'
+      +   '<span class="st" role="status"></span>'
+      + '</form>';
+    wrap.querySelector('input[name="sujet"]').value = motif || 'Chirurgie';
+    wrap.querySelector('form').addEventListener('submit', submitRappel);
+    var m = el('mecw-msgs'); m.appendChild(wrap); m.scrollTop = 1e9;
+    setTimeout(function () { var n = wrap.querySelector('input[name="nom"]'); if (n) n.focus(); }, 60);
+  }
+  function submitRappel(e) {
+    e.preventDefault();
+    var form = e.target, st = form.querySelector('.st');
+    if (form.querySelector('input[name="bot-field"]').value) return false;
+    var nom = form.querySelector('input[name="nom"]').value.trim();
+    var tel = form.querySelector('input[name="telephone"]').value.trim();
+    var cons = form.querySelector('input[name="consentement"]').checked;
+    if (!nom || !tel) { st.textContent = 'Merci d’indiquer votre nom et votre téléphone.'; st.className = 'st err'; return false; }
+    if (!cons) { st.textContent = 'Merci de cocher votre accord pour être recontacté(e).'; st.className = 'st err'; return false; }
+    var data = { 'form-name': 'rappel-chirurgie' };
+    new FormData(form).forEach(function (v, k) { data[k] = v; });
+    var body = Object.keys(data).map(function (k) { return encodeURIComponent(k) + '=' + encodeURIComponent(data[k]); }).join('&');
+    st.textContent = 'Envoi…'; st.className = 'st';
+    var sameOrigin = (location.hostname === 'meyeclinic.fr');
+    var opts = { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: body };
+    if (!sameOrigin) opts.mode = 'no-cors';
+    fetch('https://meyeclinic.fr/', opts).then(function (r) {
+      if (sameOrigin && !r.ok) throw new Error();
+      form.reset();
+      st.textContent = '✓ Merci, votre demande a bien été transmise. Le secrétariat vous recontacte rapidement.'; st.className = 'st ok';
+    }).catch(function () {
+      st.textContent = 'Une erreur est survenue. Vous pouvez appeler le ' + PHONE + '.'; st.className = 'st err';
+    });
     return false;
   }
 
