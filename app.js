@@ -116,11 +116,81 @@ const wait=addMsg('assistant',"<i style='color:#94a3b8'>L'assistant réfléchit�
 try{
 const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:history})});
 const data=await r.json();
-const reply=(data&&data.reply)?data.reply:"Désolé, une erreur est survenue. Réessayez ou appelez le 04 97 19 30 46.";
-wait.innerHTML=fmt(reply);history.push({role:'assistant',content:reply});msgsEl.scrollTop=msgsEl.scrollHeight;
+const raw=(data&&data.reply)?data.reply:"Désolé, une erreur est survenue. Réessayez ou appelez le 04 97 19 30 46.";
+const hadRappel=/\[\[RAPPEL\]\]/.test(raw);
+const reply=raw.replace(/\[\[RAPPEL\]\]/g,'').trim();
+wait.innerHTML=fmt(reply);history.push({role:'assistant',content:reply});
+if(hadRappel&&window.addRappelButton)window.addRappelButton('Chirurgie — '+text.slice(0,90));
+msgsEl.scrollTop=msgsEl.scrollHeight;
 }catch(e){wait.innerHTML="Connexion impossible pour le moment. Réessayez, ou appelez le <b>04 97 19 30 46</b>.";}
 }
 window.send=send;
+
+/* ===== Rappel secrétariat (chirurgie) — page assistant ===== */
+(function(){
+  var rpCSS=".amrp{align-self:flex-start;max-width:92%;background:#fff;border:1px solid #d7e3f2;border-radius:14px;padding:14px;margin:4px 0;box-shadow:0 8px 22px -14px rgba(10,61,143,.5)}"
+   +".amrp h4{margin:0 0 4px;font-size:15px;color:#0a3d8f;font-weight:700}"
+   +".amrp p{margin:0 0 10px;font-size:12.5px;color:#5a6b7b}"
+   +".amrp label{display:block;font-size:12px;font-weight:700;color:#0a3d8f;margin-bottom:9px}"
+   +".amrp input[type=text],.amrp input[type=tel]{width:100%;margin-top:4px;border:1px solid #cfe0ee;border-radius:10px;padding:10px 12px;font:inherit;font-size:14px;font-weight:400;outline:none;color:#1f2d3d}"
+   +".amrp input:focus{border-color:#1565d8}"
+   +".amrp .cons{display:flex;gap:8px;align-items:flex-start;font-weight:400;font-size:12px;color:#5a6b7b}"
+   +".amrp .cons input{width:auto;margin-top:2px;flex:none}"
+   +".amrp button{width:100%;margin-top:10px;background:linear-gradient(135deg,#1565d8,#0a3d8f);color:#fff;border:none;border-radius:999px;padding:12px;font:inherit;font-weight:700;font-size:14px;cursor:pointer}"
+   +".amrp .hp{position:absolute;left:-9999px;height:0;overflow:hidden}"
+   +".amrp .st{display:block;margin-top:8px;font-size:12.5px;font-weight:600}"
+   +".amrp .st.ok{color:#178a5a}.amrp .st.err{color:#c0392b}"
+   +".amrp-btn{align-self:flex-start;background:linear-gradient(135deg,#1565d8,#0a3d8f);color:#fff;border:none;border-radius:12px;padding:11px 16px;margin:4px 0;font:inherit;font-weight:700;font-size:14px;cursor:pointer;box-shadow:0 10px 24px -14px rgba(10,61,143,.7)}"
+   +".amrp-btn:hover{filter:brightness(1.06)}";
+  var s=document.createElement('style');s.textContent=rpCSS;document.head.appendChild(s);
+
+  function mbox(){return document.getElementById('msgs');}
+
+  window.addRappelButton=function(motif){
+    var m=mbox();if(!m)return;
+    var b=document.createElement('button');b.type='button';b.className='amrp-btn';
+    b.textContent='📞 Être rappelé par le secrétariat';
+    b.onclick=function(){b.remove();window.openRappelForm(motif);};
+    m.appendChild(b);m.scrollTop=m.scrollHeight;
+  };
+  window.openRappelForm=function(motif){
+    var m=mbox();if(!m)return;
+    var w=document.createElement('div');w.className='amrp';
+    w.innerHTML='<h4>Être rappelé par le secrétariat</h4>'
+     +'<p>Laissez vos coordonnées : le secrétariat vous recontacte pour organiser une consultation.</p>'
+     +'<form novalidate>'
+     +'<span class="hp"><input name="bot-field" tabindex="-1" autocomplete="off"></span>'
+     +'<label>Nom et prénom<input type="text" name="nom" required></label>'
+     +'<label>Téléphone<input type="tel" name="telephone" required></label>'
+     +'<label>Créneau souhaité (optionnel)<input type="text" name="creneau" placeholder="ex. en semaine, le matin"></label>'
+     +'<label class="cons"><input type="checkbox" name="consentement" value="oui" required> <span>J\'accepte d\'être recontacté(e) par le secrétariat.</span></label>'
+     +'<input type="hidden" name="sujet">'
+     +'<button type="submit">Demander un rappel</button>'
+     +'<span class="st" role="status"></span>'
+     +'</form>';
+    w.querySelector('input[name="sujet"]').value=motif||'Chirurgie';
+    w.querySelector('form').addEventListener('submit',submitRappelApp);
+    m.appendChild(w);m.scrollTop=m.scrollHeight;
+    setTimeout(function(){var n=w.querySelector('input[name="nom"]');if(n)n.focus();},60);
+  };
+  function submitRappelApp(e){
+    e.preventDefault();
+    var form=e.target,st=form.querySelector('.st');
+    if(form.querySelector('input[name="bot-field"]').value)return false;
+    var nom=form.querySelector('input[name="nom"]').value.trim();
+    var tel=form.querySelector('input[name="telephone"]').value.trim();
+    var cons=form.querySelector('input[name="consentement"]').checked;
+    if(!nom||!tel){st.textContent='Merci d’indiquer votre nom et votre téléphone.';st.className='st err';return false;}
+    if(!cons){st.textContent='Merci de cocher votre accord pour être recontacté(e).';st.className='st err';return false;}
+    var data={'form-name':'rappel-chirurgie'};new FormData(form).forEach(function(v,k){data[k]=v;});
+    var body=Object.keys(data).map(function(k){return encodeURIComponent(k)+'='+encodeURIComponent(data[k]);}).join('&');
+    st.textContent='Envoi…';st.className='st';
+    fetch('https://meyeclinic.fr/',{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:body})
+      .then(function(){form.reset();st.textContent='✓ Merci, votre demande a bien été transmise. Le secrétariat vous recontacte rapidement.';st.className='st ok';})
+      .catch(function(){st.textContent='Une erreur est survenue. Vous pouvez appeler le 04 97 19 30 46.';st.className='st err';});
+    return false;
+  }
+})();
 
 /* ===== Hero : conversation animée « Assistant en action » ===== */
 function heroChatDemo(){
